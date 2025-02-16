@@ -18,7 +18,7 @@ class UDPHandler(asyncio.DatagramProtocol):
 
     def datagram_received(self, data, addr):
         """Called when a UDP packet is received."""
-        response = f"{MACHINE_NAME},{MACHINE_IP},{TCP_PORT},{'1' if IS_BUSY else '0'}"
+        response = f"{MACHINE_NAME},192.168.2.124,2222,{'1' if IS_BUSY else '0'}"
         print(f"[UDP] Received query from {addr}, responding: {response}")
         if self.transport:
             self.transport.sendto(response.encode(), addr)
