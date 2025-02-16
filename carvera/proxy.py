@@ -129,6 +129,7 @@ class TcpProxy:
                 data = await reader.read(4096)
                 if not data:
                     break  # EOF or connection closed
+                print(data)
                 writer.write(data)
                 await writer.drain()
         except asyncio.CancelledError:
