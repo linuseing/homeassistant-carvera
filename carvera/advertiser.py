@@ -1,63 +1,32 @@
 import asyncio
+import socket
 
-# Machine configuration
+# Configuration
 MACHINE_NAME = "SimulatedMachine"
-MACHINE_IP = "0.0.0.0"  # Listen on all interfaces
-UDP_PORT = 8888  # Port to listen for queries
-TCP_PORT = 2222  # Port for "busy" check
-IS_BUSY = False  # Set to True to simulate a busy machine
+MACHINE_IP = "192.168.2.124"  # Change to the actual machine IP
+TCP_PORT = 2222  # Port for the "busy" check
+IS_BUSY = False  # Change to True if the machine should appear busy
+BROADCAST_IP = "255.255.255.255"  # Broadcast address
+UDP_PORT = 3333  # The port where the detector listens
+INTERVAL = 5  # Seconds between broadcasts
 
-class UDPHandler(asyncio.DatagramProtocol):
-    """Handles incoming UDP queries and responds with machine details."""
-    def __init__(self):
-        self.transport = None
+async def broadcast_udp():
+    """Sends a UDP broadcast packet with machine details."""
+    message = f"{MACHINE_NAME},{MACHINE_IP},{TCP_PORT},{'1' if IS_BUSY else '0'}".encode()
 
-    def connection_made(self, transport):
-        """Called when the UDP socket is ready."""
-        self.transport = transport
+    # Create a UDP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
-    def datagram_received(self, data, addr):
-        """Called when a UDP packet is received."""
-        response = f"{MACHINE_NAME},192.168.2.124,2222,{'1' if IS_BUSY else '0'}"
-        print(f"[UDP] Received query from {addr}, responding: {response}")
-        if self.transport:
-            self.transport.sendto(response.encode(), addr)
+    while True:
+        try:
+            sock.sendto(message, (BROADCAST_IP, UDP_PORT))
+            print(f"[UDP] Broadcast sent: {message.decode()} → {BROADCAST_IP}:{UDP_PORT}")
+        except Exception as e:
+            print(f"[UDP] Broadcast error: {e}")
 
-async def udp_listener():
-    """Listens for UDP queries and responds with machine details."""
-    loop = asyncio.get_running_loop()
-    transport, _ = await loop.create_datagram_endpoint(
-        lambda: UDPHandler(),
-        local_addr=(MACHINE_IP, UDP_PORT),
-    )
-    print(f"[UDP] Listening for queries on {MACHINE_IP}:{UDP_PORT}")
-    try:
-        await asyncio.sleep(3600)  # Keep running
-    finally:
-        transport.close()
-
-async def tcp_server():
-    """Hosts a TCP server to simulate machine availability."""
-    if IS_BUSY:
-        print(f"[TCP] Machine is busy, not accepting connections.")
-        return
-
-    server = await asyncio.start_server(handle_tcp_client, MACHINE_IP, TCP_PORT)
-    addr = server.sockets[0].getsockname()
-    print(f"[TCP] Listening on {addr}")
-
-    async with server:
-        await server.serve_forever()
-
-async def handle_tcp_client(reader, writer):
-    """Handles incoming TCP connections."""
-    addr = writer.get_extra_info("peername")
-    print(f"[TCP] Connection from {addr}")
-    await asyncio.sleep(1)  # Simulate some processing
-    writer.close()
-    await writer.wait_closed()
-    print(f"[TCP] Connection closed from {addr}")
+        await asyncio.sleep(INTERVAL)
 
 async def main():
-    """Runs both UDP and TCP servers concurrently."""
-    await asyncio.gather(udp_listener(), tcp_server())
+    """Runs the UDP broadcaster."""
+    await broadcast_udp()
