@@ -6,11 +6,11 @@
   "arch": ["amd64", "armv7", "aarch64"],
   "startup": "application",
   "boot": "auto",
+  "url": "https://github.com/linuseing/homeassistant-carvera",
   "options": {},
   "schema": {},
   "init": false,
   "hassio_api": true,
   "hassio_role": "default",
-  "map": ["config", "share"],
   "host_network": true
 }
