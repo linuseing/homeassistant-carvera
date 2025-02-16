@@ -11,4 +11,4 @@ COPY . .
 EXPOSE 8888/udp
 EXPOSE 2222/tcp
 
-CMD ["python", "simulated_machine.py"]
+CMD ["python", "main.py"]
