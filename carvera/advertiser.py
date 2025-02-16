@@ -1,8 +1,8 @@
 import asyncio
 import socket
 
-# Configuration
-MACHINE_NAME = "SimulatedMachine"
+
+MACHINE_NAME = "proxy"
 MACHINE_IP = "192.168.2.124"  # Change to the actual machine IP
 TCP_PORT = 2222  # Port for the "busy" check
 IS_BUSY = False  # Change to True if the machine should appear busy
