@@ -4,8 +4,8 @@ import proxy
 
 
 async def main():
-    pass
+    await asyncio.gather(advertiser.main(), proxy.main())
 
 
 if __name__ == "__main__":
-    asyncio.gather(advertiser.main(), proxy.main())
+    asyncio.run(main())
