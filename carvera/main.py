@@ -1,5 +1,6 @@
 import asyncio
 import advertiser
+import proxy
 
 
 async def main():
@@ -7,4 +8,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(advertiser.main())
+    asyncio.gather(advertiser.main(), proxy.main())
