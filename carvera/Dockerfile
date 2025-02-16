@@ -1,10 +1,14 @@
-# ARG BUILD_FROM
-# FROM $BUILD_FROM
-
 FROM python:3.12-slim
-LABEL maintainer="Linus Eing <linus.eing@r13.de>"
 
-COPY run.sh /run.sh
-RUN chmod a+x /run.sh
+WORKDIR /app
 
-CMD [ "/run.sh" ]
+ENV PYTHONUNBUFFERED=1
+
+RUN pip install --no-cache-dir asyncio
+
+COPY . .
+
+EXPOSE 8888/udp
+EXPOSE 2222/tcp
+
+CMD ["python", "simulated_machine.py"]

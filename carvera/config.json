@@ -1,6 +1,6 @@
 {
   "name": "Homeassistant Carvera Addon",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "slug": "carvera_addon",
   "description": "A Home Assistant add-on for the Makera Carvera/Carvera Air.",
   "arch": ["amd64", "armv7", "aarch64"],
