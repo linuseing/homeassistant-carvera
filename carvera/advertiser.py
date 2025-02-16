@@ -1,15 +1,30 @@
 import asyncio
 
 # Machine configuration
-MACHINE_NAME = "proxy"
-MACHINE_IP = "0.0.0.0"  # Change if needed
+MACHINE_NAME = "SimulatedMachine"
+MACHINE_IP = "0.0.0.0"  # Listen on all interfaces
 UDP_PORT = 8888  # Port to listen for queries
 TCP_PORT = 2222  # Port for "busy" check
 IS_BUSY = False  # Set to True to simulate a busy machine
 
+class UDPHandler(asyncio.DatagramProtocol):
+    """Handles incoming UDP queries and responds with machine details."""
+    def __init__(self):
+        self.transport = None
+
+    def connection_made(self, transport):
+        """Called when the UDP socket is ready."""
+        self.transport = transport
+
+    def datagram_received(self, data, addr):
+        """Called when a UDP packet is received."""
+        response = f"{MACHINE_NAME},{MACHINE_IP},{TCP_PORT},{'1' if IS_BUSY else '0'}"
+        print(f"[UDP] Received query from {addr}, responding: {response}")
+        if self.transport:
+            self.transport.sendto(response.encode(), addr)
+
 async def udp_listener():
     """Listens for UDP queries and responds with machine details."""
-    udp_sock = asyncio.DatagramTransport()
     loop = asyncio.get_running_loop()
     transport, _ = await loop.create_datagram_endpoint(
         lambda: UDPHandler(),
@@ -20,13 +35,6 @@ async def udp_listener():
         await asyncio.sleep(3600)  # Keep running
     finally:
         transport.close()
-
-class UDPHandler(asyncio.DatagramProtocol):
-    """Handles incoming UDP queries and responds with machine details."""
-    def datagram_received(self, data, addr):
-        response = f"{MACHINE_NAME},{MACHINE_IP},{TCP_PORT},{'1' if IS_BUSY else '0'}"
-        print(f"[UDP] Received query from {addr}, responding: {response}")
-        self.transport.sendto(response.encode(), addr)
 
 async def tcp_server():
     """Hosts a TCP server to simulate machine availability."""
