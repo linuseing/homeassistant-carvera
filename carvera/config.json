@@ -7,8 +7,24 @@
   "startup": "application",
   "boot": "auto",
   "url": "https://github.com/linuseing/homeassistant-carvera",
-  "options": {},
-  "schema": {},
+  "options": {
+    "carvera_ip": "",
+    "carvera_port": 2222,
+    "reconnect_delay": 1,
+    "homeassistant_ip": "",
+    "proxy_port": 2222,
+    "advertisement_interval": 1,
+    "name": "proxy"
+  },
+  "schema": {
+    "carvera_ip": "str",
+    "carvera_port": "int",
+    "reconnect_delay": "float",
+    "homeassistant_ip": "str",
+    "proxy_port": "int",
+    "advertisement_interval": "float",
+    "name": "str"
+  },
   "init": false,
   "hassio_api": true,
   "hassio_role": "default",
