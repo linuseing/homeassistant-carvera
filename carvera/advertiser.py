@@ -1,7 +1,7 @@
 import asyncio
 import socket
 
-from carvera.config import Config
+from config import Config
 
 BROADCAST_IP = "255.255.255.255"
 UDP_PORT = 3333

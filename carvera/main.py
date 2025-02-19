@@ -3,7 +3,7 @@ import json
 
 import advertiser
 import proxy
-from carvera.config import Config
+from config import Config
 
 
 async def main():
